@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Map with Layer Toggle</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch/dist/geosearch.css" />
+    <style>
+        #map {
+            height: 90vh;
+        }
+        .buttons {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="buttons">
+        <button onclick="showHighways()">Show Highways</button>
+        <button onclick="showNonHighways()">Show Non-Highways</button>
+    </div>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-geosearch/dist/bundle.min.js"></script>
+    <script>
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var highwaysLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team'
+        });
+
+        var nonHighwaysLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'
+        });
+
+        function showHighways() {
+            map.addLayer(highwaysLayer);
+            map.removeLayer(nonHighwaysLayer);
+        }
+
+        function showNonHighways() {
+            map.addLayer(nonHighwaysLayer);
+            map.removeLayer(highwaysLayer);
+        }
+
+        const provider = new window.GeoSearch.OpenStreetMapProvider();
+
+        const searchControl = new window.GeoSearch.GeoSearchControl({
+            provider: provider,
+            style: 'bar',
+            autoComplete: true,
+            autoCompleteDelay: 250,
+            showMarker: true,
+            showPopup: false,
+            marker: {
+                icon: new L.Icon.Default(),
+                draggable: false,
+            },
+            retainZoomLevel: false,
+            animateZoom: true,
+            keepResult: true,
+        });
+
+        map.addControl(searchControl);
+    </script>
+</body>
+</html>
